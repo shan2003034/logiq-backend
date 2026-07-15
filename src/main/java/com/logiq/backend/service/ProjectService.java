@@ -1,0 +1,69 @@
+package com.logiq.backend.service;
+
+import com.logiq.backend.dto.ProjectCreateRequest;
+import com.logiq.backend.dto.ProjectResponse;
+import com.logiq.backend.model.Framework; // අනිවාර්යයෙන් Import කරන්න
+import com.logiq.backend.model.Project;
+import com.logiq.backend.model.User;
+import com.logiq.backend.repository.FrameworkRepository; // අනිවාර්යයෙන් Import කරන්න
+import com.logiq.backend.repository.ProjectRepository;
+import com.logiq.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ProjectService {
+
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final FrameworkRepository frameworkRepository; // අලුතින් එකතු කළා
+
+    public ProjectResponse createProject(ProjectCreateRequest request, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Frontend එකෙන් එවන Framework ID එක Database එකෙන් සෙවීම
+        Framework framework = frameworkRepository.findById(request.getFrameworkId())
+                .orElseThrow(() -> new RuntimeException("Framework not found"));
+
+        String generatedApiKey = "logiq_pk_" + UUID.randomUUID().toString().replace("-", "");
+
+        Project project = new Project();
+        project.setName(request.getName());
+        project.setApiKey(generatedApiKey);
+        project.setUser(user);
+        project.setFramework(framework); // දැන් Database එකට Framework ID එක යයි
+
+        Project savedProject = projectRepository.save(project);
+
+        return mapToProjectResponse(savedProject);
+    }
+
+    public List<ProjectResponse> getUserProjects(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Project> projects = projectRepository.findByUserId(user.getId());
+
+        return projects.stream()
+                .map(this::mapToProjectResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ProjectResponse mapToProjectResponse(Project project) {
+        return ProjectResponse.builder()
+                .id(project.getId())
+                .name(project.getName())
+                .techStack(project.getFramework().getName()) // නියම Framework නම දැන් ලැබේ
+                .apiKey(project.getApiKey())
+                .totalLogs(0)
+                .errorsToday(0)
+                .lastActive("Just now")
+                .build();
+    }
+}
