@@ -1,5 +1,6 @@
 package com.logiq.backend.model;
 
+import com.logiq.backend.enums.LogLevel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,30 +17,44 @@ public class Log {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255, nullable = false)
+
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 
-    @Lob 
+    @Lob
     @Column(name = "stack_trace", columnDefinition = "LONGTEXT")
     private String stackTrace;
 
     @Column(length = 45)
     private String environment;
 
+
+    @Column(name = "occurred_at")
+    private String occurredAt;
+
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
+
+    @Column(name = "class_name", length = 255)
+    private String className;
+
+    @Column(name = "method_name", length = 255)
+    private String methodName;
+
+    @Column(name = "thread_name", length = 255)
+    private String threadName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "levels_id", nullable = false)
-    private Level level;
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private LogLevel level;
 
     @OneToOne(mappedBy = "log", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AiSolution aiSolution;

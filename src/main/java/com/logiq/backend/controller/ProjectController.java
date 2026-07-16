@@ -35,4 +35,13 @@ public class ProjectController {
         List<ProjectResponse> projects = projectService.getUserProjects(principal.getName());
         return ResponseEntity.ok(projects);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectResponse> getProjectById(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        ProjectResponse project = projectService.getProjectById(id, principal.getName());
+        return ResponseEntity.ok(project);
+    }
 }
