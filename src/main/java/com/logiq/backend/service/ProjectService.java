@@ -2,10 +2,10 @@ package com.logiq.backend.service;
 
 import com.logiq.backend.dto.ProjectCreateRequest;
 import com.logiq.backend.dto.ProjectResponse;
-import com.logiq.backend.model.Framework; // අනිවාර්යයෙන් Import කරන්න
+import com.logiq.backend.model.Framework;
 import com.logiq.backend.model.Project;
 import com.logiq.backend.model.User;
-import com.logiq.backend.repository.FrameworkRepository; // අනිවාර්යයෙන් Import කරන්න
+import com.logiq.backend.repository.FrameworkRepository;
 import com.logiq.backend.repository.ProjectRepository;
 import com.logiq.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final FrameworkRepository frameworkRepository; // අලුතින් එකතු කළා
+    private final FrameworkRepository frameworkRepository;
 
     public ProjectResponse createProject(ProjectCreateRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Frontend එකෙන් එවන Framework ID එක Database එකෙන් සෙවීම
+
         Framework framework = frameworkRepository.findById(request.getFrameworkId())
                 .orElseThrow(() -> new RuntimeException("Framework not found"));
 
@@ -37,7 +37,7 @@ public class ProjectService {
         project.setName(request.getName());
         project.setApiKey(generatedApiKey);
         project.setUser(user);
-        project.setFramework(framework); // දැන් Database එකට Framework ID එක යයි
+        project.setFramework(framework);
 
         Project savedProject = projectRepository.save(project);
 
@@ -59,11 +59,26 @@ public class ProjectService {
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
-                .techStack(project.getFramework().getName()) // නියම Framework නම දැන් ලැබේ
+                .techStack(project.getFramework().getName())
                 .apiKey(project.getApiKey())
                 .totalLogs(0)
                 .errorsToday(0)
                 .lastActive("Just now")
                 .build();
+    }
+
+    public ProjectResponse getProjectById(Long id, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+
+        if (!project.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized access to this project");
+        }
+
+        return mapToProjectResponse(project);
     }
 }

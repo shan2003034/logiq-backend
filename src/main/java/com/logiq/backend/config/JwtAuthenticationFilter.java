@@ -35,21 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Authorization header එකක් නැත්නම් හෝ එය "Bearer " වලින් පටන් ගන්නේ නැත්නම් ෆිල්ටරය මගහැර යන්න
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // "Bearer " අකුරු 7 න් පසු ඇති Token එක වෙන්කර ගැනීම
+
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // Email එකක් තිබේ නම් සහ දැනටමත් ලොග් වී නැත්නම්
+
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // Token එක නිවැරදිදැයි පරීක්ෂා කිරීම
+
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-                // Spring Security Context එක යාවත්කාලීන කිරීම (ලොග් කිරීම)
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
