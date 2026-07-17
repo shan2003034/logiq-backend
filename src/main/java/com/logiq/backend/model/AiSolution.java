@@ -1,5 +1,6 @@
 package com.logiq.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,8 +22,8 @@ public class AiSolution {
     private String rootCause;
 
     @Lob
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String solution;
+    @Column(name = "suggested_fix", columnDefinition = "TEXT", nullable = false)
+    private String suggestedFix;
 
     @Lob
     @Column(name = "code_snippet", columnDefinition = "TEXT")
@@ -35,5 +36,7 @@ public class AiSolution {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "log_id", nullable = false, unique = true)
+    @JsonIgnore
+    @ToString.Exclude
     private Log log;
 }
