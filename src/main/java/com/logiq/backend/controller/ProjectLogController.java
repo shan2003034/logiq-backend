@@ -17,6 +17,8 @@ public class ProjectLogController {
     private final LogService logService;
 
 
+
+
     @GetMapping("/{projectId}/logs")
     public ResponseEntity<List<LogResponse>> getLogsByProject(@PathVariable Long projectId) {
 
