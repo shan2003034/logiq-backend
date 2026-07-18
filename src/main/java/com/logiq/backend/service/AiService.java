@@ -59,7 +59,7 @@ public class AiService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(groqApiKey); // Groq: Authorization: Bearer <key>
+            headers.setBearerAuth(groqApiKey);
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
 
