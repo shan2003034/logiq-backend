@@ -41,6 +41,7 @@ public class AiService {
         String prompt = "Analyze the following Java error log. Return ONLY a valid JSON object without any markdown tags or code blocks. The JSON must have exactly these keys: 'cause' (brief root cause), 'fix' (step-by-step fix), and 'code' (code snippet to fix it). Error Message: "
                 + log.getMessage() + " | Stack Trace: " + log.getStackTrace();
 
+        //groq link
         String url = "https://api.groq.com/openai/v1/chat/completions";
         try {
 
