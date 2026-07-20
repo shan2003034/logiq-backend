@@ -52,6 +52,9 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Project> projects;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProjectCollaborator> collaborativeProjects;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
