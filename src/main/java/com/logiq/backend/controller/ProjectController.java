@@ -44,4 +44,13 @@ public class ProjectController {
         ProjectResponse project = projectService.getProjectById(id, principal.getName());
         return ResponseEntity.ok(project);
     }
+
+    @GetMapping("/shared")
+    public ResponseEntity<List<ProjectResponse>> getSharedProjects(Principal principal) {
+        // Principal හරහා දැනට ලොග් වී සිටින User ගේ Email එක ලබා ගනී (JWT Token එකෙන්)
+        String userEmail = principal.getName();
+
+        List<ProjectResponse> sharedProjects = projectService.getSharedProjectsForUser(userEmail);
+        return ResponseEntity.ok(sharedProjects);
+    }
 }
