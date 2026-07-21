@@ -14,5 +14,8 @@ public interface ProjectCollaboratorRepository extends JpaRepository<ProjectColl
     boolean existsByProjectIdAndUserId(Long projectId, Long userId);
     @Query("SELECT pc.project FROM ProjectCollaborator pc WHERE pc.user.email = :email")
     List<Project> findSharedProjectsByUserEmail(@Param("email") String email);
+    Optional<ProjectCollaborator> findByProjectIdAndUserEmail(Long projectId, String email);
+    List<ProjectCollaborator> findByUserEmail(String email);
+
 }
 
