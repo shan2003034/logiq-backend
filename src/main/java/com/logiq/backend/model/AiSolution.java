@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "ai_solutions")
@@ -38,5 +40,6 @@ public class AiSolution {
     @JoinColumn(name = "log_id", nullable = false, unique = true)
     @JsonIgnore
     @ToString.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Log log;
 }

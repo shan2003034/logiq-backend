@@ -3,7 +3,8 @@ package com.logiq.backend.model;
 import com.logiq.backend.enums.ProjectRole;
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,6 +23,7 @@ public class ProjectCollaborator {
     // Project එක සමඟ ඇති සම්බන්ධතාවය
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
 
     // User (Collaborator) සමඟ ඇති සම්බන්ධතාවය

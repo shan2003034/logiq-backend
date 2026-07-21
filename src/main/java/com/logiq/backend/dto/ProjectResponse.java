@@ -13,4 +13,5 @@ public class ProjectResponse {
     private long totalLogs;
     private long errorsToday;
     private String lastActive;
+    private String userRole;
 }

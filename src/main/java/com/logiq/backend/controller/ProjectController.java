@@ -2,6 +2,7 @@ package com.logiq.backend.controller;
 
 import com.logiq.backend.dto.ProjectCreateRequest;
 import com.logiq.backend.dto.ProjectResponse;
+import com.logiq.backend.dto.TeamMemberResponse;
 import com.logiq.backend.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,17 @@ public class ProjectController {
 
         List<ProjectResponse> sharedProjects = projectService.getSharedProjectsForUser(userEmail);
         return ResponseEntity.ok(sharedProjects);
+    }
+
+    @GetMapping("/{projectId}/team")
+    public ResponseEntity<List<TeamMemberResponse>> getProjectTeam(
+            @PathVariable Long projectId,
+            Principal principal) {
+
+        // දැනට ලොග් වී සිටින User ගේ Email එක
+        String userEmail = principal.getName();
+
+        List<TeamMemberResponse> team = projectService.getProjectTeam(projectId, userEmail);
+        return ResponseEntity.ok(team);
     }
 }

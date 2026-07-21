@@ -35,6 +35,9 @@ public class User implements UserDetails{
     @Column(name = "company_name", length = 100)
     private String companyName;
 
+    @Column(name = "profile_image_url", length = 255)
+    private String profileImageUrl;
+
     @Column(name = "is_verified")
     private boolean isVerified = false;
 

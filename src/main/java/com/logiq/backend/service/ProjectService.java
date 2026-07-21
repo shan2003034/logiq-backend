@@ -2,17 +2,24 @@ package com.logiq.backend.service;
 
 import com.logiq.backend.dto.ProjectCreateRequest;
 import com.logiq.backend.dto.ProjectResponse;
+import com.logiq.backend.dto.TeamMemberResponse;
 import com.logiq.backend.model.Framework;
 import com.logiq.backend.model.Project;
+import com.logiq.backend.model.ProjectCollaborator;
 import com.logiq.backend.model.User;
 import com.logiq.backend.repository.FrameworkRepository;
+import com.logiq.backend.repository.LogRepository;
 import com.logiq.backend.repository.ProjectCollaboratorRepository;
 import com.logiq.backend.repository.ProjectRepository;
 import com.logiq.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,6 +31,9 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final FrameworkRepository frameworkRepository;
     private final ProjectCollaboratorRepository projectCollaboratorRepository;
+
+    // LogRepository එක අලුතින් inject කර ඇත
+    private final LogRepository logRepository;
 
     public ProjectResponse createProject(ProjectCreateRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
@@ -42,7 +52,7 @@ public class ProjectService {
 
         Project savedProject = projectRepository.save(project);
 
-        return mapToProjectResponse(savedProject);
+        return mapToProjectResponse(savedProject, "OWNER");
     }
 
     public List<ProjectResponse> getUserProjects(String userEmail) {
@@ -52,7 +62,7 @@ public class ProjectService {
         List<Project> projects = projectRepository.findByUserId(user.getId());
 
         return projects.stream()
-                .map(this::mapToProjectResponse)
+                .map(project -> mapToProjectResponse(project, "OWNER"))
                 .collect(Collectors.toList());
     }
 
@@ -63,34 +73,79 @@ public class ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        if (!project.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized access to this project");
+        String role;
+
+        if (project.getUser().getId().equals(user.getId())) {
+            role = "OWNER";
+        } else {
+            Optional<ProjectCollaborator> collaborator = projectCollaboratorRepository.findByProjectIdAndUserEmail(id, userEmail);
+
+            if (collaborator.isPresent()) {
+                role = collaborator.get().getRole().name();
+            } else {
+                throw new RuntimeException("Unauthorized access to this project");
+            }
         }
 
-        return mapToProjectResponse(project);
+        return mapToProjectResponse(project, role);
     }
 
-    // යාවත්කාලීන කළ අලුත් Method එක
     public List<ProjectResponse> getSharedProjectsForUser(String userEmail) {
-        // 1. අදාළ User ට Share කරපු Projects ටික Database එකෙන් ගන්නවා
-        List<Project> sharedProjects = projectCollaboratorRepository.findSharedProjectsByUserEmail(userEmail);
+        List<ProjectCollaborator> sharedCollaborations = projectCollaboratorRepository.findByUserEmail(userEmail);
 
-        // 2. දැනටමත් තියෙන mapToProjectResponse හරහා DTO එකට Convert කරනවා
-        return sharedProjects.stream()
-                .map(this::mapToProjectResponse)
+        return sharedCollaborations.stream()
+                .map(collab -> mapToProjectResponse(
+                        collab.getProject(),
+                        collab.getRole().name()
+                ))
                 .collect(Collectors.toList());
     }
 
-    // DTO Mapping Method එක (වෙනසක් කර නැත)
-    private ProjectResponse mapToProjectResponse(Project project) {
+    // යාවත්කාලීන කළ DTO Mapping Method එක
+    private ProjectResponse mapToProjectResponse(Project project, String role) {
+        // 1. Logs ගණනය කිරීම් සිදු කිරීම
+        long totalLogs = logRepository.countByProjectId(project.getId());
+
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        long errorsToday = logRepository.countErrorsToday(project.getId(), startOfToday);
+
+        // 2. සත්‍ය අගයන් DTO එකට ඇතුළත් කිරීම
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .techStack(project.getFramework().getName())
                 .apiKey(project.getApiKey())
-                .totalLogs(0)
-                .errorsToday(0)
+                .totalLogs(totalLogs)       // 0 වෙනුවට සත්‍ය අගය
+                .errorsToday(errorsToday)   // 0 වෙනුවට සත්‍ය අගය
                 .lastActive("Just now")
+                .userRole(role)
                 .build();
+    }
+
+    public List<TeamMemberResponse> getProjectTeam(Long projectId, String userEmail) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        List<TeamMemberResponse> team = new ArrayList<>();
+
+        team.add(TeamMemberResponse.builder()
+                .userId(project.getUser().getId())
+                .name(project.getUser().getFirstName())
+                .email(project.getUser().getEmail())
+                .role("OWNER")
+                .build());
+
+        List<ProjectCollaborator> collaborators = projectCollaboratorRepository.findByProjectId(projectId);
+
+        for (ProjectCollaborator collab : collaborators) {
+            team.add(TeamMemberResponse.builder()
+                    .userId(collab.getUser().getId())
+                    .name(collab.getUser().getFirstName())
+                    .email(collab.getUser().getEmail())
+                    .role(collab.getRole().name())
+                    .build());
+        }
+
+        return team;
     }
 }
