@@ -18,7 +18,7 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
 
-    // 1. Profile විස්තර ලබා ගැනීම
+    // Get Profile Details
     @GetMapping
     public ResponseEntity<?> getProfile(Authentication authentication) {
         return ResponseEntity.ok(userProfileService.getUserProfile(authentication.getName()));
