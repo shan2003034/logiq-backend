@@ -34,7 +34,12 @@ public class AuthController {
         try {
             String token = authService.authenticateUser(request);
             return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.status(401).body(e.getMessage());
         } catch (Exception e) {
+
+            e.printStackTrace();
             return ResponseEntity.status(401).body("Invalid email or password");
         }
     }
@@ -47,5 +52,10 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/test-error")
+    public void testError() {
+        throw new RuntimeException("CRITICAL ERROR: Microservice communication failed at DB_CLUSTER_01!");
     }
 }
