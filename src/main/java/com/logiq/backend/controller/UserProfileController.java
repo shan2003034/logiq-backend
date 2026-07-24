@@ -24,7 +24,7 @@ public class UserProfileController {
         return ResponseEntity.ok(userProfileService.getUserProfile(authentication.getName()));
     }
 
-    // 2. සාමාන්‍ය විස්තර යාවත්කාලීන කිරීම
+    // update normal details
     @PutMapping
     public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request,
                                            Authentication authentication) {
