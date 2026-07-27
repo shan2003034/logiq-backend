@@ -32,7 +32,7 @@ public class UserProfileController {
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully"));
     }
 
-    // 3. Password වෙනස් කිරීම
+    // change password
     @PutMapping("/password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request,
                                             Authentication authentication) {
