@@ -44,7 +44,7 @@ public class UserProfileController {
         }
     }
 
-    // 4. රූපය Upload කිරීම
+    // image upload
     @PostMapping("/image")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file,
                                          Authentication authentication) {
