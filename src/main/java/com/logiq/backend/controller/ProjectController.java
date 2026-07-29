@@ -48,7 +48,7 @@ public class ProjectController {
 
     @GetMapping("/shared")
     public ResponseEntity<List<ProjectResponse>> getSharedProjects(Principal principal) {
-        // Principal හරහා දැනට ලොග් වී සිටින User ගේ Email එක ලබා ගනී (JWT Token එකෙන්)
+
         String userEmail = principal.getName();
 
         List<ProjectResponse> sharedProjects = projectService.getSharedProjectsForUser(userEmail);
@@ -60,7 +60,7 @@ public class ProjectController {
             @PathVariable Long projectId,
             Principal principal) {
 
-        // දැනට ලොග් වී සිටින User ගේ Email එක
+        // දැනට ලොග් වී සිටින User ගේ Ema
         String userEmail = principal.getName();
 
         List<TeamMemberResponse> team = projectService.getProjectTeam(projectId, userEmail);
