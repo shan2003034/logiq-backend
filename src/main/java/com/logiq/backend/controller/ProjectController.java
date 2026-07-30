@@ -60,7 +60,7 @@ public class ProjectController {
             @PathVariable Long projectId,
             Principal principal) {
 
-        // දැනට ලොග් වී සිටින User ගේ Ema
+
         String userEmail = principal.getName();
 
         List<TeamMemberResponse> team = projectService.getProjectTeam(projectId, userEmail);
