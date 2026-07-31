@@ -51,7 +51,7 @@ public class ProjectSettingsController {
         return ResponseEntity.ok(Map.of("message", "Collaborator role updated"));
     }
 
-    // වෙනස් කළ කොටස: collaboratorId වෙනුවට userId භාවිතා කිරීම
+
     @DeleteMapping("/collaborators/{userId}")
     public ResponseEntity<?> removeCollaborator(@PathVariable Long projectId,
                                                 @PathVariable Long userId,
