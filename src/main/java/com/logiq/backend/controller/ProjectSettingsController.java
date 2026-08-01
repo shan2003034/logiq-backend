@@ -41,7 +41,7 @@ public class ProjectSettingsController {
         return ResponseEntity.ok(Map.of("message", "API Key regenerated", "newApiKey", newKey));
     }
 
-    // වෙනස් කළ කොටස: collaboratorId වෙනුවට userId භාවිතා කිරීම
+
     @PutMapping("/collaborators/{userId}/role")
     public ResponseEntity<?> updateCollaboratorRole(@PathVariable Long projectId,
                                                     @PathVariable Long userId,
