@@ -13,5 +13,5 @@ public class TeamMemberResponse {
     private Long userId;
     private String name;
     private String email;
-    private String role; // "OWNER"
+    private String role;
 }
