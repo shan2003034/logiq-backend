@@ -28,12 +28,12 @@ public class CollaboratorService {
         User newCollaborator = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found in LogIQ system. Ask them to register first."));
 
-        // අදාළ පරිශීලකයා දැනටමත් Project එකේ අයිතිකරු ද යන්න පරීක්ෂා කිරීම
+
         if (project.getUser().getId().equals(newCollaborator.getId())) {
             throw new RuntimeException("User is already the owner of this project");
         }
 
-        // දැනටමත් Collaborator කෙනෙක් විදිහට ඉන්නවද යන්න පරීක්ෂා කිරීම
+
         if (collaboratorRepository.existsByProjectIdAndUserId(projectId, newCollaborator.getId())) {
             throw new RuntimeException("User is already a collaborator in this project");
         }
@@ -48,7 +48,7 @@ public class CollaboratorService {
         emailService.sendCollaborationInvite(
                 newCollaborator.getEmail(),
                 project.getName(),
-                project.getUser().getFirstName(), // Project Owner ගේ නම
+                project.getUser().getFirstName(),
                 dto.getRole().name(),
                 project.getId()
         );
