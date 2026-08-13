@@ -80,7 +80,7 @@ public class EmailService {
         String subject = "LogIQ - Invitation to collaborate on " + projectName;
         String logoUrl = "https://i.postimg.cc/ZqQsttRw/pure-logo.png";
 
-        // Frontend එකේ අදාළ Project එකට යන URL එක
+
         String frontendUrl = "http://localhost:5173/project/" + projectId;
 
         String htmlContent = """
