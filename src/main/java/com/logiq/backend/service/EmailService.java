@@ -181,7 +181,7 @@ public class EmailService {
         sendHtmlEmail(toEmail, subject, htmlContent);
     }
 
-    // 2. Project එකෙන් Remove කළාම යවන Email එක
+
     public void sendProjectRemovalEmail(String toEmail, String projectName) {
         String subject = "LogIQ - Access removed from " + projectName;
         String logoUrl = "https://i.postimg.cc/ZqQsttRw/pure-logo.png";
