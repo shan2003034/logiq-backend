@@ -26,6 +26,7 @@ public class EmailService {
         }
     }
 
+    //OTP send mail content
     public void sendOtpEmail(String toEmail, String otp, String firstName) {
         String subject = "LogIQ - Verify Your Email Address";
         String logoUrl = "https://i.postimg.cc/ZqQsttRw/pure-logo.png";
