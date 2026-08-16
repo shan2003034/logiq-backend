@@ -76,7 +76,7 @@ public class EmailService {
         sendHtmlEmail(toEmail, subject, htmlContent);
     }
 
-
+//send collaboration invite mail
     public void sendCollaborationInvite(String toEmail, String projectName, String inviterName, String role, Long projectId) {
         String subject = "LogIQ - Invitation to collaborate on " + projectName;
         String logoUrl = "https://i.postimg.cc/ZqQsttRw/pure-logo.png";
