@@ -32,7 +32,7 @@ public class ProjectService {
     private final FrameworkRepository frameworkRepository;
     private final ProjectCollaboratorRepository projectCollaboratorRepository;
 
-    // LogRepository එක අලුතින් inject කර ඇත
+
     private final LogRepository logRepository;
 
     public ProjectResponse createProject(ProjectCreateRequest request, String userEmail) {
@@ -101,22 +101,22 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    // යාවත්කාලීන කළ DTO Mapping Method එක
+
     private ProjectResponse mapToProjectResponse(Project project, String role) {
-        // 1. Logs ගණනය කිරීම් සිදු කිරීම
+
         long totalLogs = logRepository.countByProjectId(project.getId());
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         long errorsToday = logRepository.countErrorsToday(project.getId(), startOfToday);
 
-        // 2. සත්‍ය අගයන් DTO එකට ඇතුළත් කිරීම
+
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .techStack(project.getFramework().getName())
                 .apiKey(project.getApiKey())
-                .totalLogs(totalLogs)       // 0 වෙනුවට සත්‍ය අගය
-                .errorsToday(errorsToday)   // 0 වෙනුවට සත්‍ය අගය
+                .totalLogs(totalLogs)
+                .errorsToday(errorsToday)
                 .lastActive("Just now")
                 .userRole(role)
                 .build();

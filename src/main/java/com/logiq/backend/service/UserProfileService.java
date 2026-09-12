@@ -34,7 +34,7 @@ public class UserProfileService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // 1. Profile Data ලබා ගැනීම
+
     public UserProfileResponse getUserProfile(String email) {
         User user = getUserByEmail(email);
         return UserProfileResponse.builder()
@@ -47,7 +47,7 @@ public class UserProfileService {
                 .build();
     }
 
-    // 2. Profile Data වෙනස් කිරීම
+
     public void updateProfile(String email, UpdateProfileRequest request) {
         User user = getUserByEmail(email);
         user.setFirstName(request.getFirstName());
@@ -56,39 +56,39 @@ public class UserProfileService {
         userRepository.save(user);
     }
 
-    // 3. Password එක වෙනස් කිරීම
+
     public void changePassword(String email, ChangePasswordRequest request) {
         User user = getUserByEmail(email);
 
-        // පරණ Password එක හරිදැයි බැලීම
+
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
 
-        // අලුත් Password එක Encode කරලා Save කිරීම
+
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 
-    // 4. Profile Image එක Upload කිරීම
+
     public String uploadProfileImage(String email, MultipartFile file) throws IOException {
         User user = getUserByEmail(email);
 
-        // ෆෝල්ඩර් එක නැත්නම් අලුතින් හදනවා
+
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // ආරක්ෂිතව File Name එකක් හැදීම (උදා: 123e4567-e89b..._image.png)
+
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
 
-        // ෆයිල් එක Save කිරීම
+
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Database එකේ Save කරන්න URL එක හදාගන්නවා
+
         String imageUrl = "/profile-images/" + fileName;
         user.setProfileImageUrl(imageUrl);
         userRepository.save(user);
