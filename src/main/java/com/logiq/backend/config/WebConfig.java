@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
         Path uploadPath = Paths.get(profileImageDir);
         String absoluteUploadPath = uploadPath.toFile().getAbsolutePath();
 
-        // /profile-images/user_1.png විදිහට රූප ලබාගන්න පුළුවන්
+
         registry.addResourceHandler("/profile-images/**")
                 .addResourceLocations("file:" + absoluteUploadPath + "/");
     }
