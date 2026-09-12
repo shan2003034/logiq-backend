@@ -24,7 +24,7 @@ public class ProjectSettingsService {
     private final LogRepository logRepository;
     private final EmailService emailService;
 
-    // Security Check: අදාළ පුද්ගලයා Project Owner ද යන්න තහවුරු කිරීම
+
     private Project getProjectIfOwner(Long projectId, String userEmail) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
@@ -58,7 +58,7 @@ public class ProjectSettingsService {
         return newApiKey;
     }
 
-    // 4. Collaborator ගේ Role එක වෙනස් කිරීම (යාවත්කාලීන කළ කොටස)
+
     public void updateCollaboratorRole(Long projectId, Long userId, UpdateRoleRequest request, String userEmail) {
         Project project = getProjectIfOwner(projectId, userEmail);
 
@@ -69,7 +69,7 @@ public class ProjectSettingsService {
         collaborator.setRole(ProjectRole.valueOf(newRole));
         projectCollaboratorRepository.save(collaborator);
 
-        // ඊමේල් එක යැවීම
+
         try {
             emailService.sendRoleUpdateEmail(
                     collaborator.getUser().getEmail(),
@@ -82,7 +82,7 @@ public class ProjectSettingsService {
         }
     }
 
-    // 5. Collaborator ව ඉවත් කිරීම (යාවත්කාලීන කළ කොටස)
+
     public void removeCollaborator(Long projectId, Long userId, String userEmail) {
         Project project = getProjectIfOwner(projectId, userEmail);
 
@@ -94,7 +94,7 @@ public class ProjectSettingsService {
 
         projectCollaboratorRepository.delete(collaborator);
 
-        // ඊමේල් එක යැවීම
+
         try {
             emailService.sendProjectRemovalEmail(collabEmail, projectName);
         } catch (Exception e) {
